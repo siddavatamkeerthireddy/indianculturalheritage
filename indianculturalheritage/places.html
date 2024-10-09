@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Places - Indian Culture and Heritage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px; /* Added padding for some space around content */
+        }
+        #searchForm select {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        #searchResults {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        #searchForm {
+    margin-bottom: 20px;
+    display: flex; /* Add this line */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center align items */
+  }
+
+  #searchForm button {
+    margin-top: 10px; /* Add some space above the button */
+    padding: 10px 20px; /* Optional: Add padding for better button size */
+  }
+
+
+        .result-box {
+            width: 200px;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .result-box img {
+    width: 100%; /* Adjust image size as needed */
+    height: auto; /* Maintain aspect ratio */
+    cursor: pointer; /* Change cursor to hand symbol */
+}
+
+
+        .result-box:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="images/logo.jpg" alt="Indian Heritage Logo">
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="places.html">Places</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <form id="searchForm">
+        <select id="stateInput">
+            <option value="">Select State</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Telangana">Telangana</option>
+        </select>
+        <select id="categoryInput">
+            <option value="">Select Category</option>
+            <option value="Monument">Monuments</option>
+            <option value="Culture">Culture</option>
+            <option value="Heritage">Heritage</option>
+        </select>
+        <button type="button" onclick="searchPlaces()">Search</button>
+    </form>
+
+    <div id="searchResults"></div>
+</main>
+
+<script>
+    // Sample data for places by state
+    const sampleData = {
+        "Rajasthan": [
+    { id: 1, name: "Hawa Mahal", description: "Palace of Winds in Jaipur.", image: "images/hawa_mahal.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Hawa_Mahal" },
+    { id: 2, name: "Jaisalmer Fort", description: "A UNESCO World Heritage Site.", image: "images/jaisalmer_fort.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Jaisalmer_Fort" },
+    { id: 3, name: "Amber Fort", description: "A beautiful fort near Jaipur.", image: "images/amber_fort.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Amber_Fort" },
+    { id: 4, name: "Rajasthani Thali", description: "Famous Rajasthani cuisine.", image: "images/rajasthani_thali.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Rajasthani_cuisine" },
+    { id: 5, name: "Ghoomar Dance", description: "Traditional folk dance.", image: "images/ghoomar.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Ghoomar" },
+    { id: 6, name: "Mehrangarh Fort", description: "One of the largest forts in India.", image: "images/mehrangarh.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Mehrangarh" }
+    ],
+"Tamil Nadu": [
+    { id: 7, name: "Brihadeeswarar Temple", description: "UNESCO World Heritage Site.", image: "images/brihadeeswarar.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Brihadeeswarar_Temple" },
+    { id: 8, name: "Meenakshi Temple", description: "Famous for its thousand pillars.", image: "images/meenakshi.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Meenakshi_Temple" },
+    { id: 9, name: "Idli&Sambar", description: "A popular South Indian dish.", image: "images/idli.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Idli" },
+    { id: 10, name: "Bharatanatyam", description: "A classical dance form of Tamil Nadu.", image: "images/bharatanatyam.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Bharatanatyam" },
+    { id: 11, name: "Pongal", description: "A traditional harvest festival.", image: "images/pongal.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Pongal" },
+    { id: 12, name: "Thanjavur Art", description: "Traditional art form.", image: "images/thanjavur_art.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Thanjavur_art" },
+    { id: 48, name: "Dr. A P J Abdul Kalam Memorial", description: "A memorial dedicated to Dr. A P J Abdul Kalam, located in Rameswaram.", image: "images/abdul_kalam_memorial.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/APJ_Abdul_Kalam_Memorial" },
+    { id: 49, name: "Kanniyakumari Thiruvalluvar Statue", description: "A 133-foot tall statue of the famous Tamil poet and philosopher Thiruvalluvar.", image: "images/thiruvalluvar_statue.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Thiruvalluvar_Statue" }
+],
+"Karnataka": [
+    { id: 13, name: "Mysore Palace", description: "Famous royal palace.", image: "images/mysore_palace.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Mysore_Palace" },
+    { id: 14, name: "Hampi", description: "UNESCO World Heritage Site.", image: "images/hampi.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Hampi" },
+    { id: 15, name: "Vijayanagar Empire Ruins", description: "Historical ruins of the Vijayanagar empire.", image: "images/vijayanagar_ruins.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Vijayanagara" },
+    { id: 16, name: "Bisi Bele Bath", description: "Popular rice dish.", image: "images/bisi_bele_bath.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Bisi_Bele_Bath" },
+    { id: 17, name: "Yakshagana", description: "Folk theatre of Karnataka.", image: "images/yakshagana.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Yakshagana" },
+    { id: 18, name: "Mysore Dasara", description: "Famous festival in Karnataka.", image: "images/mysore_dasara.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Mysore_Dasara" }
+],
+"Uttar Pradesh": [
+    { id: 19, name: "Taj Mahal", description: "One of the Seven Wonders of the World.", image: "images/taj_mahal.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Taj_Mahal" },
+    { id: 20, name: "Varanasi Ghats", description: "Famous for its religious significance.", image: "images/varanasi_ghats.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Varanasi" },
+    { id: 21, name: "Lucknawi Biryani", description: "Famous cuisine from Lucknow.", image: "images/lucknawi_biryani.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Lucknowi_biryani" },
+    { id: 22, name: "Kathak", description: "A classical dance form of Uttar Pradesh.", image: "images/kathak.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Kathak" },
+    { id: 23, name: "Agra Fort", description: "Historic fort in Agra.", image: "images/agra_fort.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Agra_Fort" },
+    { id: 24, name: "Chhath Puja", description: "A major festival celebrated in Uttar Pradesh.", image: "images/chhath_puja.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Chhath" }
+],
+"Maharashtra": [
+    { id: 25, name: "Gateway of India", description: "Iconic arch monument.", image: "images/gateway_of_india.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Gateway_of_India" },
+    { id: 26, name: "Ajanta Caves", description: "UNESCO World Heritage Site.", image: "images/ajanta_caves.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Ajanta_Caves" },
+    { id: 27, name: "Puran Poli", description: "Sweet flatbread popular in Maharashtra.", image: "images/puran_poli.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Puran_poli" },
+    { id: 28, name: "Lavani Dance", description: "Traditional folk dance.", image: "images/lavani.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Lavani" },
+    { id: 29, name: "Ganesh Chaturthi", description: "Popular festival in Maharashtra.", image: "images/ganesh_chaturthi.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Ganesh_Chaturthi" },
+    { id: 30, name: "Elephanta Caves", description: "Famous rock-cut caves.", image: "images/elephanta_caves.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Elephanta_Caves" }
+],
+ "Andhra Pradesh": [
+    { id: 31, name: "Tirupati Balaji Temple", description: "A renowned Hindu temple dedicated to Lord Venkateswara.", image: "images/tirupathi_balaji_temple.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Venkateswara_Temple,_Tirumala" },
+    { id: 32, name: "Kondapalli Fort", description: "A historic fort near Vijayawada, known for its historical significance.", image: "images/kondapalli_fort.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Kondapalli_Fort" },
+    { id: 33, name: "Lepakshi Temple", description: "Famous temple known for its hanging pillar.", image: "images/lepakshi_temple.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Lepakshi" },
+    { id: 34, name: "Kuchipudi Dance", description: "Classical dance form originating from Andhra Pradesh.", image: "images/kuchipudi.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Kuchipudi" },
+    { id: 35, name: "Ugadi Festival", description: "New Year festival celebrated in Andhra Pradesh.", image: "images/ugadi.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Ugadi" },
+    { id: 36, name: "Araku Valley", description: "A beautiful hill station known for its scenic views and coffee plantations.", image: "images/araku_valley.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Araku_Valley" },
+    { id: 37, name: "KanakaDurga Temple", description: "It is a Hindu temple dedicated to Kanaka Durga", image: "images/durga.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Kanaka_Durga_Temple" }
+],
+"Telangana": [
+    { id: 41, name: "Charminar", description: "Iconic monument and mosque located in Hyderabad.", image: "images/charminar.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Charminar" },
+    { id: 42, name: "Golconda Fort", description: "Historic fort known for its acoustics and architecture.", image: "images/golconda_fort.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Golconda" },
+    { id: 43, name: "Ramoji Film City", description: "The largest film city in the world and a popular tourist attraction.", image: "images/ramoji_film_city.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Ramoji_Film_City" },
+    { id: 44, name: "Bonalu Festival", description: "A traditional Hindu festival celebrated in Telangana.", image: "images/bonalu.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Bonalu" },
+    { id: 45, name: "Perini Shivatandavam", description: "An ancient dance form dedicated to Lord Shiva.", image: "images/perini_shivatandavam.jpg", category: "Culture", link: "https://en.wikipedia.org/wiki/Perini_Shivatandavam" },
+    { id: 46, name: "Hussain Sagar Lake", description: "A heart-shaped lake known for the statue of Buddha in its center.", image: "images/hussain_sagar.jpg", category: "Monument", link: "https://en.wikipedia.org/wiki/Hussain_Sagar" },
+    { id: 47, name: "Kakatiya Kala Thoranam", description: "An ancient arch dating back to the Kakatiya dynasty.", image: "images/kakatiya_kala_thoranam.jpg", category: "Heritage", link: "https://en.wikipedia.org/wiki/Kakatiya_Kala_Thoranam" }
+]
+
+    };
+    function searchPlaces() {
+    const state = document.getElementById('stateInput').value;
+    const category = document.getElementById('categoryInput').value;
+    const resultsContainer = document.getElementById('searchResults');
+
+    // Clear previous results
+    resultsContainer.innerHTML = '';
+
+    // Validate selection
+    if (!state && !category) {
+        alert("Please select at least one filter.");
+        return;
+    }
+
+    // Filter the data
+    const filteredResults = sampleData[state] ? sampleData[state].filter(place => {
+        return !category || place.category === category;
+    }) : [];
+
+    // Display results
+    if (filteredResults.length === 0) {
+        resultsContainer.innerHTML = "<p>No results found.</p>";
+        return;
+    }
+
+    filteredResults.forEach(place => {
+        const resultBox = document.createElement('div');
+        resultBox.classList.add('result-box');
+        resultBox.innerHTML = `
+            <a href="${place.link}" target="_blank">
+                <img src="${place.image}" alt="${place.name}">
+            </a>
+            <h3>${place.name}</h3>
+            <p>${place.description}</p>
+        `;
+        resultsContainer.appendChild(resultBox);
+    });
+}   
+
+</script>
+</body>
+</html>
